@@ -35,6 +35,12 @@ This is a demonstration model, not a financial or operational decision system. I
 - Python 3.13. The requirements pin TensorFlow and TensorBoard to `2.20.0` and require scikit-learn `1.6` or newer (below `2.0`), matching the Python 3.13 environment used for this project.
 - The project files listed above. In particular, `app.py`, `model.h5`, and all three `.pkl` files must be in the same working directory when starting the app.
 
+## Deploying on Streamlit Community Cloud
+
+The project uses TensorFlow `2.20.0`, which supports Python 3.13 but does not provide a wheel for Python 3.14. If the deployment log shows Python `3.14` or an error about a missing `cp314` TensorFlow wheel, the issue is the cloud app's selected Python version; changing `requirements.txt` to a TensorFlow prerelease is not recommended.
+
+When creating or redeploying the app, open **Advanced settings** and select **Python 3.13** before deploying. Keep `requirements.txt` in the repository root (or beside `app.py`) so Community Cloud can install the dependencies. After changing the Python version, redeploy the app to create its environment again.
+
 ## Install and run on Windows PowerShell
 
 Open PowerShell in the project folder (the folder containing `app.py`), then run:

@@ -6,7 +6,7 @@ import tensorflow as tf
 
 
 st.set_page_config(
-    page_title="Customer Churn | Insight",
+    page_title="Will a Customer Leave?",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -187,11 +187,11 @@ model, label_encoder_gender, onehot_encoder_geo, scaler = load_artifacts()
 st.markdown(
     """
     <div class="hero">
-        <div class="hero-kicker">Customer intelligence · ANN model</div>
-        <h1 class="hero-title">Understand churn before it happens.</h1>
+        <div class="hero-kicker">Bank customer check</div>
+        <h1 class="hero-title">Could this customer leave the bank?</h1>
         <p class="hero-copy">
-            Explore a customer profile and see the model's estimated likelihood
-            of leaving. Adjust the details to compare scenarios.
+            Enter a customer's details to see how likely they may be to leave.
+            Change the details to see how the estimate changes.
         </p>
     </div>
     """,
@@ -203,15 +203,15 @@ input_column, result_column = st.columns([1.2, 0.8], gap="large")
 with input_column:
     with st.container(border=True):
         st.markdown(
-            '<p class="section-label">Customer profile</p>'
+            '<p class="section-label">About the customer</p>'
             '<p class="section-title">Customer details</p>'
-            '<p class="section-copy">Enter the account and engagement information below.</p>',
+            '<p class="section-copy">Fill in the details below to get an estimate.</p>',
             unsafe_allow_html=True,
         )
 
         geography_column, gender_column = st.columns(2)
         with geography_column:
-            geography = st.selectbox("Geography", onehot_encoder_geo.categories_[0])
+            geography = st.selectbox("Country", onehot_encoder_geo.categories_[0])
         with gender_column:
             gender = st.selectbox("Gender", label_encoder_gender.classes_)
 
@@ -219,26 +219,45 @@ with input_column:
         with age_column:
             age = st.slider("Age", 18, 92, 40)
         with credit_column:
-            credit_score = st.number_input("Credit score", min_value=0, max_value=1000, value=650, step=1)
+            credit_score = st.number_input(
+                "Credit score",
+                min_value=0,
+                max_value=1000,
+                value=650,
+                step=1,
+                help="A number that shows how well someone has managed borrowing and repayments.",
+            )
         with tenure_column:
-            tenure = st.slider("Tenure (years)", 0, 10, 5)
+            tenure = st.slider("Years with this bank", 0, 10, 5)
 
         balance_column, salary_column = st.columns(2)
         with balance_column:
-            balance = st.number_input("Account balance", min_value=0.0, value=50000.0, step=1000.0, format="%.2f")
+            balance = st.number_input(
+                "Money in the account",
+                min_value=0.0,
+                value=50000.0,
+                step=1000.0,
+                format="%.2f",
+            )
         with salary_column:
             estimated_salary = st.number_input(
-                "Estimated salary", min_value=0.0, value=50000.0, step=1000.0, format="%.2f"
+                "Estimated yearly salary",
+                min_value=0.0,
+                value=50000.0,
+                step=1000.0,
+                format="%.2f",
             )
 
         products_column, card_column, active_column = st.columns(3)
         with products_column:
-            num_of_products = st.selectbox("Products", [1, 2, 3, 4], index=1)
+            num_of_products = st.selectbox("Number of bank products", [1, 2, 3, 4], index=1)
         with card_column:
             has_cr_card = st.selectbox("Has credit card", [1, 0], format_func=lambda value: "Yes" if value else "No")
         with active_column:
             is_active_member = st.selectbox(
-                "Active member", [1, 0], format_func=lambda value: "Yes" if value else "No"
+                "Active bank customer",
+                [1, 0],
+                format_func=lambda value: "Yes" if value else "No",
             )
 
 with result_column:
@@ -266,25 +285,25 @@ with result_column:
     churn_percent = churn_probability * 100
 
     st.markdown(
-        '<p class="section-label">Model estimate</p>'
-        '<p class="section-title">Churn outlook</p>'
-        '<p class="section-copy">Prediction updates as you change the profile.</p>',
+        '<p class="section-label">Result</p>'
+        '<p class="section-title">Chance the customer may leave</p>'
+        '<p class="section-copy">This estimate changes when you update the details.</p>',
         unsafe_allow_html=True,
     )
 
     if churn_probability > 0.5:
-        status_text = "Higher churn likelihood"
+        status_text = "Higher chance of leaving"
         status_class = "status-high"
-        detail_text = "This profile is above the model's 50% decision threshold."
+        detail_text = "The estimate is more than 50%."
     else:
-        status_text = "Lower churn likelihood"
+        status_text = "Lower chance of leaving"
         status_class = "status-low"
-        detail_text = "This profile is at or below the model's 50% decision threshold."
+        detail_text = "The estimate is 50% or less."
 
     st.markdown(
         f"""
         <div class="result-card">
-            <div class="result-label">Estimated probability</div>
+            <div class="result-label">Estimated chance</div>
             <div class="result-value">{churn_percent:.1f}<span style="font-size:1.35rem;color:#74809a">%</span></div>
             <div class="status {status_class}">{status_text}</div>
             <div class="note">{detail_text}</div>
@@ -292,14 +311,13 @@ with result_column:
         """,
         unsafe_allow_html=True,
     )
-    st.progress(churn_probability, text=f"Churn probability · {churn_percent:.1f}%")
+    st.progress(churn_probability, text=f"Chance of leaving · {churn_percent:.1f}%")
 
     st.markdown(
         """
         <div class="note">
-            <strong>How to read this:</strong> The probability is an estimate from the
-            trained model, not a certainty. A result above 50% is labeled higher
-            likelihood; use it as an analytical aid, not as the sole basis for a decision.
+            <strong>Please note:</strong> This is only an estimate. It cannot say for
+            certain what a customer will do.
         </div>
         """,
         unsafe_allow_html=True,
