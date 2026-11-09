@@ -2,14 +2,22 @@
 .venv/
 venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
 # Python bytecode and caches
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyd
 
-# Jupyter
+# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Deep Learning / TensorFlow / Keras caches
+.keras/
 
 # Local secrets and environment variables
 .env
@@ -17,9 +25,12 @@ __pycache__/
 !.env.example
 .streamlit/secrets.toml
 
-# Logs and test/tool caches
+# Logs and TensorBoard
 *.log
 logs/
+*.tfevents.*
+
+# Testing and coverage
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -27,6 +38,15 @@ logs/
 coverage.xml
 htmlcov/
 
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
 # Operating system files
 .DS_Store
 Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
